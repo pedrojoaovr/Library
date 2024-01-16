@@ -6,6 +6,9 @@ import Library.Library.Entity.Livro;
 import Library.Library.Repository.LivroRepository;
 import Library.Library.Service.LivroService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -28,5 +31,16 @@ public class LivroController {
         return ResponseEntity.created(uri).body(new DadosDetalhamentoLivro(livro));
     }
 
+
+    @GetMapping
+    public ResponseEntity<Page<DadosDetalhamentoLivro>> listarTodosLivros(@PageableDefault(size = 10) Pageable paginacao) {
+        Page<DadosDetalhamentoLivro> livros = livroService.listarTodosLivros(paginacao);
+        return ResponseEntity.ok(livros);
+    }
+    @GetMapping("/disponiveis")
+    public ResponseEntity<Page<DadosDetalhamentoLivro>> listarLivrosDisponiveis(@PageableDefault(size = 10) Pageable paginacao) {
+        Page<DadosDetalhamentoLivro> livros = livroService.listarLivrosDisponiveis(paginacao);
+        return ResponseEntity.ok(livros);
+    }
 
 }
