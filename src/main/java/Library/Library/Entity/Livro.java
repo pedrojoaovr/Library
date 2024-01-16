@@ -1,12 +1,10 @@
 package Library.Library.Entity;
 
+import Library.Library.DTO.DadosDetalhamentoLivro;
 import Library.Library.DTO.Status;
 import Library.Library.DTO.DadosCadastroLivro;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Table(name = "livros")
 @Entity(name = "Livro")
@@ -25,6 +23,7 @@ public class Livro {
     private String genero;
     private String isbn;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private Status status;
 
@@ -36,6 +35,5 @@ public class Livro {
         this.isbn= dados.isbn();
         this.status= dados.status();
     }
-
 
 }

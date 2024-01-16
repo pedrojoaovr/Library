@@ -26,6 +26,7 @@ public class LivroService   {
         return repository.save(livro);
     }
 
+
     public Page<DadosDetalhamentoLivro> listarTodosLivros(Pageable paginacao) {
         return repository.findAll(paginacao).map(DadosDetalhamentoLivro::new);
     }
@@ -33,6 +34,25 @@ public class LivroService   {
     public Page<DadosDetalhamentoLivro> listarLivrosDisponiveis(Pageable paginacao) {
         return repository.findAllByStatusAndDisponivelTrue(Status.DISPONIVEL, paginacao);
     }
+
+    @Transactional
+    public void excluirLivro(Long id) {
+        repository.deleteById(id);
+    }
+
+    @Transactional
+    public Livro alterarStatusLivro(Long id, Status novoStatus) {
+        Livro livro = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Livro não encontrado: " + id));
+
+        if (livro.getStatus() != novoStatus) {
+            livro.setStatus(novoStatus);
+            return repository.save(livro);
+        } else {
+            throw new IllegalStateException("O livro já está no status desejado.");
+        }
+    }
+
 
 
 }
