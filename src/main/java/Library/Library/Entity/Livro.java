@@ -30,7 +30,7 @@ public class Livro {
     public Livro(DadosCadastroLivro dados) {
         this.titulo = dados.titulo();
         this.autor = dados.autor();
-        this.ano_publicacao = dados.ano_pubicacao();
+        this.ano_publicacao = dados.ano_publicacao();
         this.genero=dados.genero();
         this.isbn= dados.isbn();
         this.status= dados.status();

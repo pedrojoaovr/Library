@@ -4,12 +4,16 @@ import Library.Library.DTO.DadosCadastroLivro;
 import Library.Library.DTO.DadosDetalhamentoLivro;
 import Library.Library.DTO.Status;
 import Library.Library.Entity.Livro;
+import Library.Library.Entity.LogAlteracoes;
 import Library.Library.Repository.LivroRepository;
+import Library.Library.Repository.LogTransacaoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 public class LivroService   {
@@ -17,6 +21,9 @@ public class LivroService   {
 
     @Autowired
     LivroRepository repository;
+
+    @Autowired
+    LogTransacaoRepository logAlteracoesRepository;
 
     @Transactional
     public Livro save(Livro livro) {
@@ -46,12 +53,25 @@ public class LivroService   {
                 .orElseThrow(() -> new IllegalArgumentException("Livro não encontrado: " + id));
 
         if (livro.getStatus() != novoStatus) {
+            Status statusAnterior = livro.getStatus();
             livro.setStatus(novoStatus);
-            return repository.save(livro);
+            Livro livroAtualizado = repository.save(livro);
+            inserirLogTransacaoLivro(id, statusAnterior, novoStatus);
+            return livroAtualizado;
         } else {
             throw new IllegalStateException("O livro já está no status desejado.");
         }
     }
+
+    private void inserirLogTransacaoLivro(Long livroId, Status statusAnterior, Status statusAtual) {
+        LogAlteracoes logTransacao = new LogAlteracoes();
+        logTransacao.setLivroId(livroId);
+        logTransacao.setStatusAnterior(statusAnterior);
+        logTransacao.setStatusAtual(statusAtual);
+        logTransacao.setDataTransacao(LocalDateTime.now());
+        logAlteracoesRepository.save(logTransacao);
+    }
+
 
 
 

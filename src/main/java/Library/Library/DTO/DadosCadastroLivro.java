@@ -11,7 +11,7 @@ public record DadosCadastroLivro(
         String autor,
 
         @NotNull
-        int ano_pubicacao,
+        int ano_publicacao,
         @NotBlank
         String genero,
         @NotBlank
