@@ -26,7 +26,7 @@ public class LivroController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity cadastrar(@RequestBody DadosCadastroLivro dados, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity cadastrar(@Valid @RequestBody DadosCadastroLivro dados, UriComponentsBuilder uriBuilder) {
         var livro = new Livro(dados);
         livroService.save(livro);
         var uri = uriBuilder.path("/livros/{id}").buildAndExpand(livro.getId()).toUri();
@@ -38,11 +38,19 @@ public class LivroController {
         Page<DadosDetalhamentoLivro> livros = livroService.listarTodosLivros(paginacao);
         return ResponseEntity.ok(livros);
     }
-    @GetMapping("/disponiveis")
-    public ResponseEntity<Page<DadosDetalhamentoLivro>> listarLivrosDisponiveis(@PageableDefault(size = 10) Pageable paginacao) {
-        Page<DadosDetalhamentoLivro> livros = livroService.listarLivrosDisponiveis(paginacao);
+
+    @GetMapping("/porStatus")
+    public ResponseEntity<Page<DadosDetalhamentoLivro>> listarLivrosPorStatus(@RequestParam Status status, @PageableDefault(size = 10) Pageable paginacao) {
+        Page<DadosDetalhamentoLivro> livros = livroService.listarLivrosPorStatus(status, paginacao);
         return ResponseEntity.ok(livros);
     }
+
+    @GetMapping("/porTitulo")
+    public ResponseEntity<Page<DadosDetalhamentoLivro>> buscarPorNome(@RequestParam String palavraChave, @PageableDefault(size = 10) Pageable paginacao) {
+        Page<DadosDetalhamentoLivro> livros = livroService.buscarLivrosPorPalavraChave(palavraChave, paginacao);
+        return ResponseEntity.ok(livros);
+    }
+
 
     @DeleteMapping("/{id}")
     @Transactional
@@ -53,14 +61,16 @@ public class LivroController {
 
     @PutMapping("/{id}/alterar-status")
     @Transactional
-    public ResponseEntity<DadosDetalhamentoLivro> alterarStatusLivro(@PathVariable Long id, @RequestParam Status novoStatus) {
+    public ResponseEntity<DadosDetalhamentoLivro> alterarStatusLivro( @PathVariable Long id, @RequestParam Status novoStatus) {
         Livro livro = livroService.alterarStatusLivro(id, novoStatus);
-        if (livro == null) {
-            return ResponseEntity.notFound().build();
-        }
         DadosDetalhamentoLivro livroAtualizado = new DadosDetalhamentoLivro(livro);
         return ResponseEntity.ok(livroAtualizado);
     }
+
+
+
+
+
 
 
 }
