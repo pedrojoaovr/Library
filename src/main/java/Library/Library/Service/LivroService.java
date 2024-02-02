@@ -1,5 +1,6 @@
 package Library.Library.Service;
 
+import Library.Library.DTO.DadosAtualizacaoLivro;
 import Library.Library.DTO.DadosCadastroLivro;
 import Library.Library.DTO.DadosDetalhamentoLivro;
 import Library.Library.DTO.Status;
@@ -59,20 +60,19 @@ public class LivroService   {
     }
 
     @Transactional
-    public Livro alterarStatusLivro(Long id, Status novoStatus) {
+    public Livro alterarStatusLivro(Long id, DadosAtualizacaoLivro dadosAtualizacaoLivro) {
         Livro livro = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Livro não encontrado: " + id));
 
-        if (livro.getStatus() != novoStatus) {
+        if (livro.getStatus() != dadosAtualizacaoLivro.status()) {
             Status statusAnterior = livro.getStatus();
-            livro.setStatus(novoStatus);
+            livro.setStatus(dadosAtualizacaoLivro.status());
             Livro livroAtualizado = repository.save(livro);
-            inserirLogTransacaoLivro(id, statusAnterior, novoStatus);
+            inserirLogTransacaoLivro(id, statusAnterior, dadosAtualizacaoLivro.status());
             return livroAtualizado;
         } else {
             throw new IllegalStateException("O livro já está no status desejado.");
         }
-
     }
 
     private void inserirLogTransacaoLivro(Long livroId, Status statusAnterior, Status statusAtual) {

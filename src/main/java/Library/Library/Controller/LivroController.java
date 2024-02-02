@@ -1,5 +1,6 @@
 package Library.Library.Controller;
 
+import Library.Library.DTO.DadosAtualizacaoLivro;
 import Library.Library.DTO.DadosCadastroLivro;
 import Library.Library.DTO.DadosDetalhamentoLivro;
 import Library.Library.DTO.Status;
@@ -61,11 +62,14 @@ public class LivroController {
 
     @PutMapping("/{id}/alterar-status")
     @Transactional
-    public ResponseEntity<DadosDetalhamentoLivro> alterarStatusLivro( @PathVariable Long id, @RequestParam Status novoStatus) {
-        Livro livro = livroService.alterarStatusLivro(id, novoStatus);
-        DadosDetalhamentoLivro livroAtualizado = new DadosDetalhamentoLivro(livro);
+    public ResponseEntity<Livro> alterarStatusLivro(
+            @PathVariable Long id,
+            @RequestBody DadosAtualizacaoLivro dadosAtualizacaoLivro) {
+        Livro livroAtualizado = livroService.alterarStatusLivro(id, dadosAtualizacaoLivro);
         return ResponseEntity.ok(livroAtualizado);
     }
+
+
 
 
 
